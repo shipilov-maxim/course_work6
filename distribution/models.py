@@ -54,3 +54,16 @@ class MailingSettings(models.Model):
     start_time = models.DateTimeField(verbose_name='Дата начала рассылки')
     periodicity = models.CharField(max_length=20, choices=PERIODICITY_CHOICES, verbose_name='Периодичность')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATED, verbose_name='Статус рассылки')
+
+
+class MailingLog(models.Model):
+    time = models.DateTimeField(verbose_name='Дата и время создания лога', auto_now_add=True)
+    status = models.BooleanField(verbose_name='Статус попытки')
+    server_response = models.CharField(max_length=1000, verbose_name='Ответ почтового сервера', **NULLABLE)
+
+    def __str__(self):
+        return f'{self.time} {self.status}'
+
+    class Meta:
+        verbose_name = 'лог'
+        verbose_name_plural = 'логи'
