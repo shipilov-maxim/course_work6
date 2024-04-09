@@ -13,19 +13,23 @@
         <div class="col-4 mb-4">
             <div class="card mb-4 rounded-3">
                 <div class="card-header py-3  text-center">
-                    <h4 class="my-0 fw-normal">{{object.title}}</h4>
+                    <h4 class="my-0 fw-normal">{{object.status}}</h4>
                 </div>
                 <div class="card-body">
-                    <p>
-                        {{object.text|string_slice}}
+                    <p>{{object.start_time}}</p>
+                    <p>{{object.periodicity}}</p>
+                    <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a>
+                    <p>{% for client in object.clients.all %}
+                        {{ client }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
                     </p>
                     <div class="card-footer">
                         <div class="row">
                             <div class="btn-group" role="group">
                                 <a type="button" class="btn btn-secondary col-4"
-                                   href="{% url 'distribution:update_message' object.pk %}">Изменить</a>
+                                   href="{% url 'distribution:update_distribution' object.pk %}">Изменить</a>
                                 <a type="button" class="btn btn-danger col-4"
-                                   href="{% url 'distribution:delete_message' object.pk %}">Удалить</a>
+                                   href="{% url 'distribution:delete_distribution' object.pk %}">Удалить</a>
                             </div>
                         </div>
                     </div>

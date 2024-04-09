@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, DetailView
 
 from distribution.forms import MessageForm, ClientForm, MailingSettingsForm
 from distribution.models import Message, Client, MailingSettings
@@ -16,6 +16,12 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
     form_class = MessageForm
     success_url = reverse_lazy('distribution:messages')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.creator = self.request.user
+        self.object.save()
+        return super().form_valid(form)
+
 
 class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
@@ -28,6 +34,10 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('distribution:messages')
 
 
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    model = Message
+
+
 class MessageListView(LoginRequiredMixin, ListView):
     model = Message
 
@@ -36,6 +46,12 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('distribution:clients')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.creator = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
@@ -56,18 +72,24 @@ class ClientListView(LoginRequiredMixin, ListView):
 class MailingSettingsCreateView(LoginRequiredMixin, CreateView):
     model = MailingSettings
     form_class = MailingSettingsForm
-    success_url = reverse_lazy('distribution:clients')
+    success_url = reverse_lazy('distribution:distributions')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.creator = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
 
 class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
     model = MailingSettings
     form_class = MailingSettingsForm
-    success_url = reverse_lazy('distribution:clients')
+    success_url = reverse_lazy('distribution:distributions')
 
 
 class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
     model = MailingSettings
-    success_url = reverse_lazy('distribution:clients')
+    success_url = reverse_lazy('distribution:distributions')
 
 
 class MailingSettingsListView(ListView):

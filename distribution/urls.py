@@ -1,8 +1,9 @@
 from django.urls import path
 from distribution.apps import DistributionConfig
-from distribution.views import HomePageView, MessageCreateView, MessageUpdateView, MessageDeleteView, MessageListView, \
-    ClientCreateView, ClientUpdateView, ClientDeleteView, ClientListView, MailingSettingsCreateView, \
-    MailingSettingsUpdateView, MailingSettingsDeleteView, MailingSettingsListView
+from distribution.views import (HomePageView, MessageCreateView, MessageUpdateView, MessageDeleteView,
+                                MessageDetailView, MessageListView, ClientCreateView, ClientUpdateView,
+                                ClientDeleteView, ClientListView, MailingSettingsCreateView, MailingSettingsUpdateView,
+                                MailingSettingsDeleteView, MailingSettingsListView)
 
 app_name = DistributionConfig.name
 
@@ -11,6 +12,7 @@ urlpatterns = [
     path('create_message/', MessageCreateView.as_view(), name='create_message'),
     path('update_message/<int:pk>', MessageUpdateView.as_view(), name='update_message'),
     path('delete_message/<int:pk>', MessageDeleteView.as_view(), name='delete_message'),
+    path('message/<int:pk>', MessageDetailView.as_view(), name='message'),
     path('messages', MessageListView.as_view(), name='messages'),
     path('create_client/', ClientCreateView.as_view(), name='create_client'),
     path('update_client/<int:pk>', ClientUpdateView.as_view(), name='update_client'),
