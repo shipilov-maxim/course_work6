@@ -1,0 +1,39 @@
+{% extends 'distribution/base.html' %}
+{% load tags %}
+{% block content %}
+<div class="container-lg">
+    <div class="row container">
+        <div class="col-4"></div>
+        <div class="col-4 text-center">
+            <a type="button" class="btn btn-success mb-5 rounded-3 col-12"
+               href="{% url 'distribution:create_distribution' %}">Создать рассылку</a>
+        </div>
+        <div class="col-4"></div>
+        {% for object in object_list %}
+        <div class="col-4 mb-4">
+            <div class="card mb-4 rounded-3">
+                <div class="card-header py-3  text-center">
+                    <h4 class="my-0 fw-normal">{{object.title}}</h4>
+                </div>
+                <div class="card-body">
+                    <p>
+                        {{object.text|string_slice}}
+                    </p>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="btn-group" role="group">
+                                <a type="button" class="btn btn-secondary col-4"
+                                   href="{% url 'distribution:update_message' object.pk %}">Изменить</a>
+                                <a type="button" class="btn btn-danger col-4"
+                                   href="{% url 'distribution:delete_message' object.pk %}">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

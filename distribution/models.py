@@ -8,7 +8,7 @@ class Client(models.Model):
     surname = models.CharField(max_length=64, verbose_name='Фамилия', **NULLABLE)
     name = models.CharField(max_length=64, verbose_name='Имя', **NULLABLE)
     patronymic = models.CharField(max_length=64, verbose_name='Отчество', **NULLABLE)
-    comment = models.TextField(default=None, verbose_name='Комментарий', **NULLABLE)
+    comment = models.TextField(verbose_name='Комментарий', **NULLABLE)
 
     def __str__(self):
         return self.email
@@ -54,6 +54,8 @@ class MailingSettings(models.Model):
     start_time = models.DateTimeField(verbose_name='Дата начала рассылки')
     periodicity = models.CharField(max_length=20, choices=PERIODICITY_CHOICES, verbose_name='Периодичность')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATED, verbose_name='Статус рассылки')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, verbose_name='Сообщение')
+    clients = models.ManyToManyField(Client, verbose_name='Клиенты рассылки')
 
 
 class MailingLog(models.Model):

@@ -1,0 +1,23 @@
+{% extends 'distribution/base.html' %}
+{% block content %}
+{% load tags %}
+<div class="row">
+    <div class="col-3"></div>
+    <div class="card col-6">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Адрес электронной почты</label>
+                    <input name="email" type="email" class="form-control" id="Email" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">Мы никогда никому не передадим вашу электронную почту.</div>
+                </div>
+                <p></p>
+                <button type="submit" class="btn btn-success">
+                    Отправить пароль
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

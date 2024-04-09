@@ -37,11 +37,11 @@ class UserRegisterView(CreateView):
         return super().form_valid(form)
 
 
-def confirm_email(token):
+def confirm_email(request, token):
     user = get_object_or_404(User, token=token)
     user.is_active = True
     user.save()
-    return redirect(reverse('catalog:home'))
+    return redirect(reverse('distribution:home'))
 
 
 def recover_password(request):
@@ -56,5 +56,5 @@ def recover_password(request):
         user.save()
         message = f'Ваш временный пароль\n{new_password}'
         send_mail('Восстановление пароля', message, settings.EMAIL_HOST_USER, [user.email])
-        return redirect(reverse('catalog:home'))
+        return redirect(reverse('distribution:home'))
     return render(request, template_name)
