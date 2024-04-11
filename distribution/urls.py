@@ -3,7 +3,7 @@ from distribution.apps import DistributionConfig
 from distribution.views import (HomePageView, MessageCreateView, MessageUpdateView, MessageDeleteView,
                                 MessageDetailView, MessageListView, ClientCreateView, ClientUpdateView,
                                 ClientDeleteView, ClientListView, MailingSettingsCreateView, MailingSettingsUpdateView,
-                                MailingSettingsDeleteView, MailingSettingsListView)
+                                MailingSettingsDeleteView, MailingSettingsListView, set_timezone)
 
 app_name = DistributionConfig.name
 
@@ -22,4 +22,5 @@ urlpatterns = [
     path('update_distribution/<int:pk>', MailingSettingsUpdateView.as_view(), name='update_distribution'),
     path('delete_distribution/<int:pk>', MailingSettingsDeleteView.as_view(), name='delete_distribution'),
     path('distributions', MailingSettingsListView.as_view(), name='distributions'),
+    path('set_timezone', set_timezone, name='set_timezone')
 ]

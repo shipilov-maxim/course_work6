@@ -1,3 +1,5 @@
+{% load tz %}
+{% get_current_timezone as TIME_ZONE %}
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="https://github.com/shipilov-maxim/course_work6">Курсовая по Django</a>
@@ -28,6 +30,7 @@
                     <a class="nav-link disabled" aria-disabled="true">У</a>
                 </li>
             </ul>
+            <a class="nav-link me-2" href="{% url 'distribution:set_timezone' %}">{{ TIME_ZONE }}</a>
             {% if user.is_authenticated %}
             <span class="text me-2" style="color-white" aria-disabled="true">Привет
                 {% if user.first_name %}

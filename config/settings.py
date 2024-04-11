@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'distribution.middleware.TimezoneMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -116,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'Europe/Samara'
 
 USE_I18N = True
 
