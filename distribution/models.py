@@ -55,6 +55,7 @@ class MailingSettings(models.Model):
     ]
 
     start_time = models.DateTimeField(verbose_name='Дата начала рассылки')
+    end_time = models.DateTimeField(verbose_name='Дата конца рассылки')
     periodicity = models.CharField(max_length=20, choices=PERIODICITY_CHOICES, verbose_name='Периодичность')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATED, verbose_name='Статус рассылки')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, verbose_name='Сообщение')

@@ -16,10 +16,11 @@
                     <h4 class="my-0 fw-normal">{{object.status}}</h4>
                 </div>
                 <div class="card-body">
-                    <p>{{object.start_time}}</p>
-                    <p>{{object.periodicity}}</p>
-                    <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a>
-                    <p>{% for client in object.clients.all %}
+                    <p>Начало - {{object.start_time}}</p>
+                    <p>Конец - {{object.end_time}}</p>
+                    <p>Периодичность - {{object.periodicity}}</p>
+                    <p>Сообщение - <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a></p>
+                    <p>Получатели - {% for client in object.clients.all %}
                         {{ client }}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                     </p>

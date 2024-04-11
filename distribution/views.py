@@ -1,10 +1,21 @@
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, DetailView
-
 from distribution.forms import MessageForm, ClientForm, MailingSettingsForm
+from distribution.management.commands.runapscheduler import my_job
 from distribution.models import Message, Client, MailingSettings
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    my_job,
+    trigger=CronTrigger(second="*/10"),
+    id="my_job",
+    max_instances=1,
+    replace_existing=True,
+)
+scheduler.start()
 
 
 class HomePageView(TemplateView):
