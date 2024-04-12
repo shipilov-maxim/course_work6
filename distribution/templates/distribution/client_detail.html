@@ -1,0 +1,32 @@
+{% extends 'distribution/base.html' %}
+{% load tags %}
+{% block content %}
+<div class="container-lg">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6 mb-4">
+            <div class="card mb-4 rounded-3">
+                <div class="card-header py-3  text-center">
+                    <h4 class="my-0 fw-normal">{{ object.email }}</h4>
+                </div>
+                <div class="card-body">
+                    <p>Фамилия - {% if object.surname %}{{object.surname}}{% else %}Не указано{% endif %}</p>
+                    <p>Имя - {% if object.name %}{{object.name}}{% else %}Не указано{% endif %}</p>
+                    <p>Отчество - {% if object.patronymic %}{{object.patronymic}}{% else %}Не указано{% endif %}</p>
+                    <p>Комментарий - {% if object.comment %}{{object.comment}}{% else %}Не указано{% endif %}</p>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="btn-group" role="group">
+                                <a type="button" class="btn btn-secondary col-4"
+                                   href="{% url 'distribution:update_client' object.pk %}">Изменить</a>
+                                <a type="button" class="btn btn-danger col-4"
+                                   href="{% url 'distribution:delete_client' object.pk %}">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

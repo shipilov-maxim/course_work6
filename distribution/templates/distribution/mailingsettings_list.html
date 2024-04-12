@@ -20,8 +20,9 @@
                     <p>Конец - {{object.end_time}}</p>
                     <p>Периодичность - {{object.periodicity}}</p>
                     <p>Сообщение - <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a></p>
-                    <p>Получатели - {% for client in object.clients.all %}
-                        {{ client }}{% if not forloop.last %},{% endif %}
+                    <p>Получатели -
+                        {% for client in object.clients.all %}
+                        <a class="link mb-2" href="{% url 'distribution:client' client.pk %}">{{client}}</a>{% if not forloop.last %},{% endif %}
                         {% endfor %}
                     </p>
                     <div class="card-footer">

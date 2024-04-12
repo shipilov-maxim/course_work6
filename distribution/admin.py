@@ -1,5 +1,5 @@
 from django.contrib import admin
-from distribution.models import Message, Client, MailingSettings
+from distribution.models import Message, Client, MailingSettings, MailingLog
 
 
 @admin.register(Message)
@@ -15,3 +15,8 @@ class ClientAdmin(admin.ModelAdmin):
 @admin.register(MailingSettings)
 class MailingSettingsAdmin(admin.ModelAdmin):
     list_display = ('start_time', 'id', 'periodicity', 'status', 'message')
+
+
+@admin.register(MailingLog)
+class MailingLogAdmin(admin.ModelAdmin):
+    list_display = ('time', 'id', 'status', 'server_response', 'mailing')

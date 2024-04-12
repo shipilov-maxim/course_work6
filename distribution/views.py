@@ -93,6 +93,10 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('distribution:clients')
 
 
+class ClientDetailView(LoginRequiredMixin, DetailView):
+    model = Client
+
+
 class ClientListView(LoginRequiredMixin, ListView):
     model = Client
 

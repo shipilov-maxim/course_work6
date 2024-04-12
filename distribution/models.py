@@ -68,7 +68,6 @@ class MailingLog(models.Model):
     status = models.BooleanField(verbose_name='Статус попытки')
     server_response = models.CharField(max_length=1000, verbose_name='Ответ почтового сервера', **NULLABLE)
     mailing = models.ForeignKey(MailingSettings, on_delete=models.CASCADE, verbose_name='Рассылка', **NULLABLE)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
         return f'{self.time} {self.status}'
