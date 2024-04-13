@@ -22,12 +22,15 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'distribution:distributions' %}">Рассылки</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'distribution:logs' %}">Логи</a>
+                </li>
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="#">Блог</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">У</a>
+                    <a class="nav-link disabled" aria-disabled="true">Версия 1.0</a>
                 </li>
             </ul>
             <a class="nav-link me-2" href="{% url 'distribution:set_timezone' %}">{{ TIME_ZONE }}</a>

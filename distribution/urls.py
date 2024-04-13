@@ -1,9 +1,16 @@
 from django.urls import path
+
 from distribution.apps import DistributionConfig
-from distribution.views import (HomePageView, MessageCreateView, MessageUpdateView, MessageDeleteView,
-                                MessageDetailView, MessageListView, ClientCreateView, ClientUpdateView,
-                                ClientDeleteView, ClientListView, MailingSettingsCreateView, MailingSettingsUpdateView,
-                                MailingSettingsDeleteView, MailingSettingsListView, set_timezone, ClientDetailView)
+from distribution.views import (ClientCreateView, ClientDeleteView,
+                                ClientDetailView, ClientListView,
+                                ClientUpdateView, HomePageView,
+                                MailingSettingsCreateView,
+                                MailingSettingsDeleteView,
+                                MailingSettingsListView,
+                                MailingSettingsUpdateView, MessageCreateView,
+                                MessageDeleteView, MessageDetailView,
+                                MessageListView, MessageUpdateView,
+                                set_timezone, MailingLogListView)
 
 app_name = DistributionConfig.name
 
@@ -23,5 +30,6 @@ urlpatterns = [
     path('update_distribution/<int:pk>', MailingSettingsUpdateView.as_view(), name='update_distribution'),
     path('delete_distribution/<int:pk>', MailingSettingsDeleteView.as_view(), name='delete_distribution'),
     path('distributions', MailingSettingsListView.as_view(), name='distributions'),
+    path('logs', MailingLogListView.as_view(), name='logs'),
     path('set_timezone', set_timezone, name='set_timezone')
 ]

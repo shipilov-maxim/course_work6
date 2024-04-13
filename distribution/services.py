@@ -1,19 +1,28 @@
-from smtplib import SMTPException
-import logging
-from django.conf import settings
-from django_apscheduler.models import DjangoJobExecution
-from django_apscheduler import util
-from apscheduler.triggers.cron import CronTrigger
-from django.core.mail import send_mail
 import calendar
+import logging
 from datetime import datetime, timedelta
+from smtplib import SMTPException
+
+from apscheduler.triggers.cron import CronTrigger
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models import QuerySet
-from django_apscheduler.jobstores import DjangoJobStore
-from config import settings
-from distribution.models import MailingSettings, MailingLog
 from django.utils import timezone
+from django_apscheduler import util
+from django_apscheduler.jobstores import DjangoJobStore
+from django_apscheduler.models import DjangoJobExecution
+
+from config import settings
+from distribution.models import MailingLog, MailingSettings
 
 logger = logging.getLogger(__name__)
+
+today = datetime.today()
+PERIODICITY = {
+        "Раз в день": timedelta(days=1),
+        "Раз в неделю": timedelta(weeks=1),
+        "Раз в месяц": timedelta(days=calendar.monthrange(today.year, (today.month + 1))[1]),
+}
 
 
 def my_job():
@@ -30,7 +39,7 @@ def apscheduler(scheduler):
 
     scheduler.add_job(
         my_job,
-        trigger=CronTrigger(second="*/10"),
+        trigger=CronTrigger(second="*/5"),
         id="my_job",
         max_instances=1,
         replace_existing=True,
@@ -70,7 +79,6 @@ def send_distribution(mailing):
             recipient_list=[client.email for client in mailing.clients.all()],
             fail_silently=False
         )
-        status = True
         error_message = 'OK'
     except SMTPException as error:
         status = False
@@ -90,20 +98,22 @@ def send_distribution(mailing):
 
 
 def sort_mailing():
-    active_mailings: QuerySet = MailingSettings.objects.exclude(status='Завершена')
-    current_time = timezone.localtime(timezone.now())
-    now_utc = (timezone.now()).strftime('%H:%M')
-    for mailing in active_mailings:
+    mailings: QuerySet = MailingSettings.objects.all()
+    current_time = timezone.now()
+    now = current_time.strftime('%H:%M')
+    for mailing in mailings:
         if mailing.end_time <= current_time:
             mailing.status = "Завершена"
+            mailing.save()
+        elif mailing.start_time > current_time:
+            mailing.status = "Создана"
             mailing.save()
         elif mailing.start_time <= current_time < mailing.end_time:
             mailing.status = "Запущена"
             mailing.save()
-
-            #                 today = datetime.today()
-            #                 days = calendar.monthrange(today.year, today.month)[1]
-            #                 mailing.next_send = current_time + timedelta(days=days)
-
-            if mailing.start_time.strftime('%H:%M') == now_utc:
+            if MailingLog.objects.filter(mailing=mailing.pk).exists():
+                delta = current_time - MailingLog.objects.filter(mailing=mailing.pk).last().time
+                if mailing.start_time.strftime('%H:%M') == now and delta > PERIODICITY[mailing.periodicity]:
+                    send_distribution(mailing)
+            else:
                 send_distribution(mailing)

@@ -62,6 +62,13 @@ class MailingSettings(models.Model):
     clients = models.ManyToManyField(Client, verbose_name='Клиенты рассылки')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
+    def __str__(self):
+        return f'{self.message} {self.periodicity}'
+
+    class Meta:
+        verbose_name = 'Настройки рассылки'
+        verbose_name_plural = 'Настройки рассылки'
+
 
 class MailingLog(models.Model):
     time = models.DateTimeField(verbose_name='Дата и время создания лога', auto_now_add=True)

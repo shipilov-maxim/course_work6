@@ -1,15 +1,17 @@
+import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import QuerySet
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, DetailView
-from distribution.forms import MessageForm, ClientForm, MailingSettingsForm
-from distribution.models import Message, Client, MailingSettings
-from django.shortcuts import redirect, render
-import pytz
 from django.utils import timezone
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView)
+
+from distribution.forms import ClientForm, MailingSettingsForm, MessageForm
+from distribution.models import Client, MailingSettings, Message, MailingLog
 from distribution.services import apscheduler
 
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
@@ -19,19 +21,12 @@ apscheduler(scheduler)
 def set_timezone(request):
     if request.method == 'POST':
         request.session['django_timezone'] = request.POST['timezone']
-        # form = UserCreateForm(request.POST)
-        #
-        # if form.is_valid():
-        #     user = form.save(commit=False)
-        #     user.username = request.POST.get('email')
-        #     user.save()
-        #
-        #     return HttpResponseRedirect(reverse_lazy('homePage'))
-        # return HttpResponse('Form not valid')
-        # return reverse_lazy('distribution:home')
+        mailings: QuerySet = MailingSettings.objects.all()
+        for mailing in mailings:
+            mailing.start_time = timezone.localtime(mailing.start_time)
         return HttpResponseRedirect(reverse_lazy('distribution:home'))
     else:
-        return render(request, 'distribution/includes/timezone.html', {'timezones': pytz.common_timezones})
+        return render(request, 'distribution/timezone.html', {'timezones': pytz.common_timezones})
 
 
 class HomePageView(TemplateView):
@@ -78,7 +73,6 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
         self.object = form.save()
         self.object.creator = self.request.user
         self.object.save()
-        print(timezone.localtime(timezone.now()))
         return super().form_valid(form)
 
 
@@ -126,3 +120,7 @@ class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
 
 class MailingSettingsListView(ListView):
     model = MailingSettings
+
+
+class MailingLogListView(ListView):
+    model = MailingLog

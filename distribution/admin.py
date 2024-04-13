@@ -1,5 +1,6 @@
 from django.contrib import admin
-from distribution.models import Message, Client, MailingSettings, MailingLog
+
+from distribution.models import Client, MailingLog, MailingSettings, Message
 
 
 @admin.register(Message)

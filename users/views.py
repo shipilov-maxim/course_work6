@@ -6,8 +6,9 @@ from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView
+
 from users.forms import LoginForm, UserRegisterForm
 from users.models import User
 

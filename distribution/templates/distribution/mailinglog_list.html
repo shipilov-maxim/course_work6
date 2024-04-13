@@ -1,0 +1,22 @@
+{% extends 'distribution/base.html' %}
+{% load tags %}
+{% block content %}
+<div class="container-lg mt-5">
+    <div class="row container">
+        {% for object in object_list %}
+        <div class="col-12">
+            <div class="card mb-4 rounded-3">
+                <div class="card-header py-3  text-center">
+                    <a class="link mb-2" href="{% url 'distribution:update_distribution' object.mailing.pk %}">
+                        <h4 class="my-0 fw-normal">{{object.mailing}}</h4></a>
+                </div>
+                <div class="card-body">
+                    <p>{{object.time}} {{object.server_response}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

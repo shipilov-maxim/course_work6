@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
 from distribution.forms import StyleFormMixin
 from users.models import User
 
