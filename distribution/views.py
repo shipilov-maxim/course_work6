@@ -1,9 +1,11 @@
+from typing import Type, Union
+
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -16,6 +18,22 @@ from distribution.services import apscheduler
 
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 apscheduler(scheduler)
+
+ModelsWithOwners = Type[Union[Client, Message, MailingSettings]]
+
+
+class BindOwnerMixin:
+    model: ModelsWithOwners
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_staff:
+            return self.model.objects.all().select_related("owner")
+        else:
+            return self.model.objects.filter(owner=self.request.user).select_related("owner")
 
 
 def set_timezone(request):
@@ -33,50 +51,38 @@ class HomePageView(TemplateView):
     template_name = "distribution/index.html"
 
 
-class MessageCreateView(LoginRequiredMixin, CreateView):
-    model = Message
-    form_class = MessageForm
-    success_url = reverse_lazy('distribution:messages')
-
-    def form_valid(self, form):
-        self.object = form.save()
-        self.object.creator = self.request.user
-        self.object.save()
-        return super().form_valid(form)
-
-
-class MessageUpdateView(LoginRequiredMixin, UpdateView):
+class MessageCreateView(LoginRequiredMixin, BindOwnerMixin, CreateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('distribution:messages')
 
 
-class MessageDeleteView(LoginRequiredMixin, DeleteView):
+class MessageUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy('distribution:messages')
+
+
+class MessageDeleteView(LoginRequiredMixin, BindOwnerMixin, DeleteView):
     model = Message
     success_url = reverse_lazy('distribution:messages')
 
 
-class MessageDetailView(LoginRequiredMixin, DetailView):
+class MessageDetailView(LoginRequiredMixin, BindOwnerMixin, DetailView):
     model = Message
 
 
-class MessageListView(LoginRequiredMixin, ListView):
+class MessageListView(LoginRequiredMixin, BindOwnerMixin, ListView):
     model = Message
 
 
-class ClientCreateView(LoginRequiredMixin, CreateView):
+class ClientCreateView(LoginRequiredMixin, BindOwnerMixin, CreateView):
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('distribution:clients')
 
-    def form_valid(self, form):
-        self.object = form.save()
-        self.object.creator = self.request.user
-        self.object.save()
-        return super().form_valid(form)
 
-
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
+class ClientUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateView):
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('distribution:clients')
@@ -87,40 +93,34 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('distribution:clients')
 
 
-class ClientDetailView(LoginRequiredMixin, DetailView):
+class ClientDetailView(LoginRequiredMixin, BindOwnerMixin, DetailView):
     model = Client
 
 
-class ClientListView(LoginRequiredMixin, ListView):
+class ClientListView(LoginRequiredMixin, BindOwnerMixin, ListView):
     model = Client
 
 
-class MailingSettingsCreateView(LoginRequiredMixin, CreateView):
-    model = MailingSettings
-    form_class = MailingSettingsForm
-    success_url = reverse_lazy('distribution:distributions')
-
-    def form_valid(self, form):
-        self.object = form.save()
-        self.object.creator = self.request.user
-        self.object.save()
-        return super().form_valid(form)
-
-
-class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
+class MailingSettingsCreateView(LoginRequiredMixin, BindOwnerMixin, CreateView):
     model = MailingSettings
     form_class = MailingSettingsForm
     success_url = reverse_lazy('distribution:distributions')
 
 
-class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
+class MailingSettingsUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateView):
+    model = MailingSettings
+    form_class = MailingSettingsForm
+    success_url = reverse_lazy('distribution:distributions')
+
+
+class MailingSettingsDeleteView(LoginRequiredMixin, BindOwnerMixin, DeleteView):
     model = MailingSettings
     success_url = reverse_lazy('distribution:distributions')
 
 
-class MailingSettingsListView(ListView):
+class MailingSettingsListView(LoginRequiredMixin, BindOwnerMixin, ListView):
     model = MailingSettings
 
 
-class MailingLogListView(ListView):
+class MailingLogListView(LoginRequiredMixin, ListView):
     model = MailingLog
