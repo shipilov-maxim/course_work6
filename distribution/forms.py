@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import DateTimeInput
+from django.forms import DateTimeInput, SelectMultiple
 
 from distribution.models import Client, MailingSettings, Message
 
@@ -32,14 +32,6 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
 
 
 class MailingSettingsForm(StyleFormMixin, forms.ModelForm):
-    # def clean_message(self):
-    #     cleaned_data = self.clean_message.get('message')
-    #     wrong = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево',
-    #              'бесплатно', 'обман', 'полиция', 'радар']
-    #     for word in wrong:
-    #         if word in cleaned_data:
-    #             raise forms.ValidationError('Название содержит недопустимое слово')
-    #     return cleaned_data
 
     class Meta:
         model = MailingSettings

@@ -58,6 +58,7 @@ class MailingSettings(models.Model):
     end_time = models.DateTimeField(verbose_name='Дата конца рассылки')
     periodicity = models.CharField(max_length=20, choices=PERIODICITY_CHOICES, verbose_name='Периодичность')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATED, verbose_name='Статус рассылки')
+    is_active = models.BooleanField(default=True, verbose_name='Статус работы')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, default=None, verbose_name='Сообщение')
     clients = models.ManyToManyField(Client, verbose_name='Клиенты рассылки')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
@@ -68,6 +69,9 @@ class MailingSettings(models.Model):
     class Meta:
         verbose_name = 'Настройки рассылки'
         verbose_name_plural = 'Настройки рассылки'
+        permissions = [
+            ('set_active', 'Can active mailingsettings')
+        ]
 
 
 class MailingLog(models.Model):
@@ -75,6 +79,7 @@ class MailingLog(models.Model):
     status = models.BooleanField(verbose_name='Статус попытки')
     server_response = models.CharField(max_length=1000, verbose_name='Ответ почтового сервера', **NULLABLE)
     mailing = models.ForeignKey(MailingSettings, on_delete=models.CASCADE, verbose_name='Рассылка', **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
         return f'{self.time} {self.status}'

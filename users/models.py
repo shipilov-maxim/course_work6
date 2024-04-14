@@ -13,3 +13,8 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    class Meta:
+        permissions = [
+            ('set_active', 'Can active users')
+        ]

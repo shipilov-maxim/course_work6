@@ -15,9 +15,9 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(MailingSettings)
 class MailingSettingsAdmin(admin.ModelAdmin):
-    list_display = ('start_time', 'id', 'periodicity', 'status', 'message', 'owner')
+    list_display = ('start_time', 'id', 'periodicity', 'status', 'is_active', 'message', 'owner')
 
 
 @admin.register(MailingLog)
 class MailingLogAdmin(admin.ModelAdmin):
-    list_display = ('time', 'id', 'status', 'server_response', 'mailing')
+    list_display = ('time', 'id', 'status', 'server_response', 'mailing', 'owner')

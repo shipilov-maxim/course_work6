@@ -19,12 +19,18 @@
                     <p>Начало - {{object.start_time}}</p>
                     <p>Конец - {{object.end_time}}</p>
                     <p>Периодичность - {{object.periodicity}}</p>
-                    <p>Сообщение - <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a></p>
+                    <p>Сообщение - <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a>
+                    </p>
                     <p>Получатели -
                         {% for client in object.clients.all %}
                         <a class="link mb-2" href="{% url 'distribution:client' client.pk %}">{{client}}</a>{% if not forloop.last %},{% endif %}
                         {% endfor %}
                     </p>
+                    {% if object.is_active %}
+                        <p><a class="link mb-2" href="{% url 'distribution:toggle_active' object.pk %}">Активно</a></p>
+                    {% else %}
+                        <p><a class="link mb-2" href="{% url 'distribution:toggle_active' object.pk %}">Неактивно</a></p>
+                    {% endif %}
                     <div class="card-footer">
                         <div class="row">
                             <div class="btn-group" role="group">

@@ -61,7 +61,7 @@ def apscheduler(scheduler):
 
     try:
         logger.info("Starting scheduler...")
-        scheduler.start()
+        # scheduler.start()
     except KeyboardInterrupt:
         logger.info("Stopping scheduler...")
         scheduler.shutdown()
@@ -98,7 +98,7 @@ def send_distribution(mailing):
 
 
 def sort_mailing():
-    mailings: QuerySet = MailingSettings.objects.all()
+    mailings: QuerySet = MailingSettings.objects.filter(is_active=True)
     current_time = timezone.now()
     now = current_time.strftime('%H:%M')
     for mailing in mailings:
