@@ -1,0 +1,55 @@
+{% extends 'distribution/base.html' %}
+{% load tags %}
+{% block content %}
+<div class="container-lg">
+    <div class="row container">
+        <div class="col-4"></div>
+        <div class="col-4 text-center">
+            <a type="button" class="btn btn-success mb-5 rounded-3 col-12"
+               href="{% url 'distribution:create_distribution' %}">Создать рассылку</a>
+        </div>
+        <div class="col-4"></div>
+        {% for object in object_list %}
+        <div class="col-4 mb-4">
+            <div class="card mb-4 rounded-3">
+                <div class="card-header py-3  text-center">
+                    <h4 class="my-0 fw-normal">{{object.status}}</h4>
+                </div>
+                <div class="card-body">
+                    <p>Начало - {{object.start_time}}</p>
+                    <p>Конец - {{object.end_time}}</p>
+                    <p>Периодичность - {{object.periodicity}}</p>
+                    <p>Сообщение - <a class="link mb-2" href="{% url 'distribution:message' object.message.pk %}">{{object.message}}</a>
+                    </p>
+                    <p>Получатели -
+                        {% for client in object.clients.all %}
+                        <a class="link mb-2" href="{% url 'distribution:client' client.pk %}">{{client}}</a>{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                    {% if perms.distribution.set_active or user == object.owner %}
+                    {% if object.is_active %}
+                        <p><a class="link mb-2" href="{% url 'distribution:toggle_active' object.pk %}">Активно</a></p>
+                    {% else %}
+                        <p><a class="link mb-2" href="{% url 'distribution:toggle_active' object.pk %}">Неактивно</a></p>
+                    {% endif %}
+                    {% endif %}
+                    {% if perms.distribution.change_mailingsettings or user == object.owner %}
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="btn-group" role="group">
+                                <a type="button" class="btn btn-secondary col-4"
+                                   href="{% url 'distribution:update_distribution' object.pk %}">Изменить</a>
+                                <a type="button" class="btn btn-danger col-4"
+                                   href="{% url 'distribution:delete_distribution' object.pk %}">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

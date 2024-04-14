@@ -1,0 +1,17 @@
+{% extends 'distribution/base.html' %}
+{% block content %}
+{% load tags %}
+<div class="row">
+    <div class="col-3"></div>
+    <div class="card col-6">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <p>Хотите удалить {{object.email}} ?</p>
+                <button type="submit" class="btn btn-success">Подтвердить</button>
+                <a type="button" class="btn btn-danger" href="{% url 'distribution:clients' %}">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
