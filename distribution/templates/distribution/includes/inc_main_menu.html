@@ -25,9 +25,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'distribution:logs' %}">Логи</a>
                 </li>
+                {% if user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:users' %}">Юзеры</a>
+                </li>
+                {% endif %}
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Блог</a>
+                    <a class="nav-link" href="{% url 'blog:blogs' %}">Блог</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">Версия 1.0</a>

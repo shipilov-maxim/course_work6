@@ -26,11 +26,14 @@
                         <a class="link mb-2" href="{% url 'distribution:client' client.pk %}">{{client}}</a>{% if not forloop.last %},{% endif %}
                         {% endfor %}
                     </p>
+                    {% if perms.distribution.set_active or user == object.owner %}
                     {% if object.is_active %}
                         <p><a class="link mb-2" href="{% url 'distribution:toggle_active' object.pk %}">Активно</a></p>
                     {% else %}
                         <p><a class="link mb-2" href="{% url 'distribution:toggle_active' object.pk %}">Неактивно</a></p>
                     {% endif %}
+                    {% endif %}
+                    {% if perms.distribution.change_mailingsettings or user == object.owner %}
                     <div class="card-footer">
                         <div class="row">
                             <div class="btn-group" role="group">
@@ -41,6 +44,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

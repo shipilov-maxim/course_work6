@@ -19,6 +19,7 @@
                     <p>
                         {{object.text|string_slice}}
                     </p>
+                    {% if perms.distribution.change_mailingsettings or user == object.owner %}
                     <div class="card-footer">
                         <div class="row">
                             <div class="btn-group" role="group">
@@ -31,6 +32,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

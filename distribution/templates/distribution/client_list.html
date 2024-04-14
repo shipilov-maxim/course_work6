@@ -20,6 +20,7 @@
                     <p>Имя - {% if object.name %}{{object.name}}{% else %}Не указано{% endif %}</p>
                     <p>Отчество - {% if object.patronymic %}{{object.patronymic}}{% else %}Не указано{% endif %}</p>
                     <p>Комментарий - {% if object.comment %}{{object.comment}}{% else %}Не указано{% endif %}</p>
+                    {% if perms.distribution.change_mailingsettings or user == object.owner %}
                     <div class="card-footer">
                         <div class="row">
                             <div class="btn-group" role="group">
@@ -30,6 +31,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

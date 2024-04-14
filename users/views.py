@@ -2,12 +2,13 @@ import secrets
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from users.forms import LoginForm, UserRegisterForm
 from users.models import User
@@ -20,6 +21,10 @@ class LoginView(BaseLoginView):
 
 class LogoutView(BaseLogoutView):
     template_name = 'users/login.html'
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = User
 
 
 class UserRegisterView(CreateView):
@@ -59,3 +64,13 @@ def recover_password(request):
         send_mail('Восстановление пароля', message, settings.EMAIL_HOST_USER, [user.email])
         return redirect(reverse('distribution:home'))
     return render(request, template_name)
+
+
+def toggle_active(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect(reverse('users:users'))

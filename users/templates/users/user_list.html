@@ -1,0 +1,25 @@
+{% extends 'distribution/base.html' %}
+{% load tags %}
+{% block content %}
+<div class="container-lg">
+    <div class="row container">
+        {% for object in object_list %}
+        <div class="col-4 mb-4">
+            <div class="card mb-4 rounded-3">
+                <div class="card-header py-3  text-center">
+                    <h4 class="my-0 fw-normal">{{ object.email }}</h4>
+                </div>
+                <div class="card-body">
+                    {% if object.is_active %}
+                        <p><a class="link mb-2" href="{% url 'users:toggle_active_user' object.pk %}">Активен</a></p>
+                    {% else %}
+                        <p><a class="link mb-2" href="{% url 'users:toggle_active_user' object.pk %}">Неактивен</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

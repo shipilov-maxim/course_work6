@@ -9,14 +9,11 @@ from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-
 from distribution.forms import ClientForm, MailingSettingsForm, MessageForm
 from distribution.models import Client, MailingSettings, Message, MailingLog
-
-# from distribution.services import apscheduler
+from distribution.services import apscheduler
 
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-
 
 # apscheduler(scheduler)
 
@@ -32,6 +29,16 @@ class BindOwnerMixin:
             return self.model.objects.all().select_related("owner")
         else:
             return self.model.objects.filter(owner=self.request.user).select_related("owner")
+
+
+class UpdateMixin:
+    def get_form_class(self):
+        user = self.request.user
+        if user.groups.filter(name='менеджер').exists():
+            return HttpResponseForbidden
+        if user == self.object.owner or user.is_superuser:
+            return self.form_class
+        raise HttpResponseForbidden
 
 
 class LimitedFormMixin:
@@ -54,7 +61,7 @@ class MessageCreateView(LoginRequiredMixin, BindOwnerMixin, CreateView):
     success_url = reverse_lazy('distribution:messages')
 
 
-class MessageUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateView):
+class MessageUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateMixin, UpdateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('distribution:messages')
@@ -79,7 +86,7 @@ class ClientCreateView(LoginRequiredMixin, BindOwnerMixin, CreateView):
     success_url = reverse_lazy('distribution:clients')
 
 
-class ClientUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateView):
+class ClientUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateMixin, UpdateView):
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('distribution:clients')
@@ -104,18 +111,10 @@ class MailingSettingsCreateView(LoginRequiredMixin, BindOwnerMixin, LimitedFormM
     success_url = reverse_lazy('distribution:distributions')
 
 
-class MailingSettingsUpdateView(LoginRequiredMixin, BindOwnerMixin, LimitedFormMixin, UpdateView):
+class MailingSettingsUpdateView(LoginRequiredMixin, BindOwnerMixin, LimitedFormMixin, UpdateMixin, UpdateView):
     model = MailingSettings
     form_class = MailingSettingsForm
     success_url = reverse_lazy('distribution:distributions')
-
-    # def get_form_class(self):
-    #     user = self.request.user
-    #     if user.groups.filter(name='менеджер').exists():
-    #         return ManagerForm
-    #     if user == self.object.ow or user.is_staff:
-    #         return self.form_class
-    #     raise HttpResponseForbidden
 
 
 class MailingSettingsDeleteView(LoginRequiredMixin, BindOwnerMixin, DeleteView):
@@ -129,6 +128,12 @@ class MailingSettingsListView(LoginRequiredMixin, BindOwnerMixin, ListView):
 
 class MailingLogListView(LoginRequiredMixin, BindOwnerMixin, ListView):
     model = MailingLog
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_staff:
+            return super().get_queryset().order_by('-time')
+        else:
+            return super().get_queryset().order_by('-time')
 
 
 def set_timezone(request):
