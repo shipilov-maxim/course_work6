@@ -21,5 +21,5 @@ def media(data):
 @register.filter
 def string_slice(string: str):
     if len(string) > 200:
-        return string[:200] + '...'
+        return string[:100] + '...'
     return string

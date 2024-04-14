@@ -1,3 +1,4 @@
+import random
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
@@ -9,13 +10,16 @@ from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
+
+from blog.models import Blog
 from distribution.forms import ClientForm, MailingSettingsForm, MessageForm
 from distribution.models import Client, MailingSettings, Message, MailingLog
 from distribution.services import apscheduler
 
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 
-# apscheduler(scheduler)
+
+apscheduler(scheduler)
 
 
 class BindOwnerMixin:
@@ -52,6 +56,12 @@ class LimitedFormMixin:
 
 
 class HomePageView(TemplateView):
+    random_blogs = list(Blog.objects.all())
+    random_blogs = random.sample(random_blogs, 3)
+    extra_context = {'object_list': random_blogs,
+                     'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
+                     'distributions': MailingSettings.objects.all().count(),
+                     'clients_unique': Client.objects.values('email').distinct().count()}
     template_name = "distribution/index.html"
 
 

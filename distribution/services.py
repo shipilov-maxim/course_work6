@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 today = datetime.today()
 PERIODICITY = {
-        "Раз в день": timedelta(minutes=1),
+        "Раз в день": timedelta(days=1),
         "Раз в неделю": timedelta(weeks=1),
         "Раз в месяц": timedelta(days=calendar.monthrange(today.year, (today.month + 1))[1]),
 }
@@ -61,7 +61,7 @@ def apscheduler(scheduler):
 
     try:
         logger.info("Starting scheduler...")
-        # scheduler.start()
+        scheduler.start()
     except KeyboardInterrupt:
         logger.info("Stopping scheduler...")
         scheduler.shutdown()
@@ -114,7 +114,7 @@ def sort_mailing():
             mailing.save()
             if MailingLog.objects.filter(mailing=mailing.pk).exists():
                 delta = current_time - MailingLog.objects.filter(mailing=mailing.pk).last().time
-                if mailing.start_time.strftime('%H:%M') == now or delta > PERIODICITY[mailing.periodicity]:
+                if mailing.start_time.strftime('%H:%M') == now and delta > PERIODICITY[mailing.periodicity]:
                     send_distribution(mailing)
             else:
                 send_distribution(mailing)
