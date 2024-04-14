@@ -19,7 +19,7 @@ from distribution.services import apscheduler
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 
 
-apscheduler(scheduler)
+# apscheduler(scheduler)
 
 
 class BindOwnerMixin:
@@ -56,12 +56,12 @@ class LimitedFormMixin:
 
 
 class HomePageView(TemplateView):
-    random_blogs = list(Blog.objects.all())
-    random_blogs = random.sample(random_blogs, 3)
-    extra_context = {'object_list': random_blogs,
-                     'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
-                     'distributions': MailingSettings.objects.all().count(),
-                     'clients_unique': Client.objects.values('email').distinct().count()}
+    # random_blogs = list(Blog.objects.all())
+    # random_blogs = random.sample(random_blogs, 3)
+    # extra_context = {'object_list': random_blogs,
+    #                  'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
+    #                  'distributions': MailingSettings.objects.all().count(),
+    #                  'clients_unique': Client.objects.values('email').distinct().count()}
     template_name = "distribution/index.html"
 
 
