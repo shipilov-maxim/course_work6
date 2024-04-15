@@ -14,7 +14,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from blog.models import Blog
 from distribution.forms import ClientForm, MailingSettingsForm, MessageForm
 from distribution.models import Client, MailingSettings, Message, MailingLog
-from distribution.services import apscheduler
+from distribution.services import apscheduler, cache_extra_context
 
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 
@@ -56,12 +56,7 @@ class LimitedFormMixin:
 
 
 class HomePageView(TemplateView):
-    # random_blogs = list(Blog.objects.all())
-    # random_blogs = random.sample(random_blogs, 3)
-    # extra_context = {'object_list': random_blogs,
-    #                  'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
-    #                  'distributions': MailingSettings.objects.all().count(),
-    #                  'clients_unique': Client.objects.values('email').distinct().count()}
+    extra_context = cache_extra_context()
     template_name = "distribution/index.html"
 
 
