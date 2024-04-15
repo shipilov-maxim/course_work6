@@ -1,10 +1,12 @@
 import calendar
 import logging
+import random
 from datetime import datetime, timedelta
 from smtplib import SMTPException
 
 from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -12,16 +14,18 @@ from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 
+from blog.models import Blog
 from config import settings
-from distribution.models import MailingLog, MailingSettings
+from config.settings import CACHE_ENABLED
+from distribution.models import MailingLog, MailingSettings, Client
 
 logger = logging.getLogger(__name__)
 
 today = datetime.today()
 PERIODICITY = {
-        "Раз в день": timedelta(days=1),
-        "Раз в неделю": timedelta(weeks=1),
-        "Раз в месяц": timedelta(days=calendar.monthrange(today.year, (today.month + 1))[1]),
+    "Раз в день": timedelta(days=1),
+    "Раз в неделю": timedelta(weeks=1),
+    "Раз в месяц": timedelta(days=calendar.monthrange(today.year, (today.month + 1))[1]),
 }
 
 
@@ -118,3 +122,25 @@ def sort_mailing():
                     send_distribution(mailing)
             else:
                 send_distribution(mailing)
+
+
+def cache_extra_context():
+    if not CACHE_ENABLED:
+        random_blogs = list(Blog.objects.all())
+        random_blogs = random.sample(random_blogs, 3)
+        extra_context = {'object_list': random_blogs,
+                         'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
+                         'distributions': MailingSettings.objects.all().count(),
+                         'clients_unique': Client.objects.values('email').distinct().count()}
+        return extra_context
+    key = "extra_context"
+    extra_context = cache.get(key)
+    if extra_context is None:
+        random_blogs = list(Blog.objects.all())
+        random_blogs = random.sample(random_blogs, 3)
+        extra_context = {'object_list': random_blogs,
+                         'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
+                         'distributions': MailingSettings.objects.all().count(),
+                         'clients_unique': Client.objects.values('email').distinct().count()}
+        cache.set(key, extra_context)
+    return extra_context
