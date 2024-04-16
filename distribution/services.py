@@ -126,9 +126,7 @@ def sort_mailing():
 
 def cache_extra_context():
     if not CACHE_ENABLED:
-        random_blogs = list(Blog.objects.all())
-        random_blogs = random.sample(random_blogs, 3)
-        extra_context = {'object_list': random_blogs,
+        extra_context = {'object_list': Blog.objects.all().order_by('?')[:3],
                          'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
                          'distributions': MailingSettings.objects.all().count(),
                          'clients_unique': Client.objects.values('email').distinct().count()}
@@ -136,9 +134,7 @@ def cache_extra_context():
     key = "extra_context"
     extra_context = cache.get(key)
     if extra_context is None:
-        random_blogs = list(Blog.objects.all())
-        random_blogs = random.sample(random_blogs, 3)
-        extra_context = {'object_list': random_blogs,
+        extra_context = {'object_list': Blog.objects.all().order_by('?')[:3],
                          'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
                          'distributions': MailingSettings.objects.all().count(),
                          'clients_unique': Client.objects.values('email').distinct().count()}

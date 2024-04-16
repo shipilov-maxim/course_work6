@@ -1,4 +1,3 @@
-import random
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
@@ -10,8 +9,6 @@ from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-
-from blog.models import Blog
 from distribution.forms import ClientForm, MailingSettingsForm, MessageForm
 from distribution.models import Client, MailingSettings, Message, MailingLog
 from distribution.services import apscheduler, cache_extra_context
@@ -56,8 +53,10 @@ class LimitedFormMixin:
 
 
 class HomePageView(TemplateView):
-    extra_context = cache_extra_context()
     template_name = "distribution/index.html"
+
+    def get_context_data(self, **kwargs):
+        return cache_extra_context()
 
 
 class MessageCreateView(LoginRequiredMixin, BindOwnerMixin, CreateView):
