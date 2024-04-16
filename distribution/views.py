@@ -16,9 +16,6 @@ from distribution.services import apscheduler, cache_extra_context
 scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 
 
-# apscheduler(scheduler)
-
-
 class BindOwnerMixin:
 
     def form_valid(self, form):
@@ -56,6 +53,7 @@ class HomePageView(TemplateView):
     template_name = "distribution/index.html"
 
     def get_context_data(self, **kwargs):
+        apscheduler(scheduler)
         return cache_extra_context()
 
 

@@ -65,7 +65,7 @@ def apscheduler(scheduler):
 
     try:
         logger.info("Starting scheduler...")
-        # scheduler.start()
+        scheduler.start()
     except KeyboardInterrupt:
         logger.info("Stopping scheduler...")
         scheduler.shutdown()
