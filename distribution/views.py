@@ -1,6 +1,4 @@
 import pytz
-from apscheduler.schedulers.background import BackgroundScheduler
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpResponseRedirect, HttpResponseForbidden
@@ -11,9 +9,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 from distribution.forms import ClientForm, MailingSettingsForm, MessageForm, MailingSettingsFormUpdate
 from distribution.models import Client, MailingSettings, Message, MailingLog
-from distribution.services import apscheduler, cache_extra_context
-
-scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+from distribution.services import cache_extra_context
 
 
 class BindOwnerMixin:
@@ -53,7 +49,6 @@ class HomePageView(TemplateView):
     template_name = "distribution/index.html"
 
     def get_context_data(self, **kwargs):
-        apscheduler(scheduler)
         return cache_extra_context()
 
 

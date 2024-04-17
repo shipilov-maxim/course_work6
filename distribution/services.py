@@ -4,6 +4,7 @@ import random
 from datetime import datetime, timedelta
 from smtplib import SMTPException
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
 from django.core.cache import cache
@@ -125,6 +126,8 @@ def sort_mailing():
 
 
 def cache_extra_context():
+    scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+    apscheduler(scheduler)
     if not CACHE_ENABLED:
         extra_context = {'object_list': Blog.objects.all().order_by('?')[:3],
                          'distributions_active': MailingSettings.objects.filter(is_active=True).count(),
