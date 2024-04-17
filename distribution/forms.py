@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import DateTimeInput, SelectMultiple
+from django.forms import DateTimeInput
 
 from distribution.models import Client, MailingSettings, Message
 
@@ -14,7 +14,8 @@ class StyleFormMixin:
                 field.widget.attrs['class'] = 'form-control'
             if isinstance(field, forms.DateTimeField):
                 field.widget = DateTimeInput(
-                    attrs={"placeholder": "ДД.ММ.ГГГГ ЧЧ:ММ:СС",
+                    attrs={'class': 'form-control',
+                           "placeholder": "ДД.ММ.ГГГГ ЧЧ:ММ:СС",
                            "type": "datetime-local"}
                 )
 
@@ -32,7 +33,22 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
 
 
 class MailingSettingsForm(StyleFormMixin, forms.ModelForm):
-
     class Meta:
         model = MailingSettings
         exclude = ('status', 'owner',)
+
+
+class MailingSettingsFormUpdate(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = MailingSettings
+        exclude = ('status', 'owner',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field, forms.DateTimeField):
+                field.widget = DateTimeInput(
+                    attrs={'class': 'form-control',
+                           "placeholder": "ДД.ММ.ГГГГ ЧЧ:ММ:СС",
+                           "type": "datetime"}
+                )

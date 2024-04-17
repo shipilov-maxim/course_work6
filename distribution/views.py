@@ -9,7 +9,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-from distribution.forms import ClientForm, MailingSettingsForm, MessageForm
+from distribution.forms import ClientForm, MailingSettingsForm, MessageForm, MailingSettingsFormUpdate
 from distribution.models import Client, MailingSettings, Message, MailingLog
 from distribution.services import apscheduler, cache_extra_context
 
@@ -115,7 +115,7 @@ class MailingSettingsCreateView(LoginRequiredMixin, BindOwnerMixin, LimitedFormM
 
 class MailingSettingsUpdateView(LoginRequiredMixin, BindOwnerMixin, LimitedFormMixin, UpdateMixin, UpdateView):
     model = MailingSettings
-    form_class = MailingSettingsForm
+    form_class = MailingSettingsFormUpdate
     success_url = reverse_lazy('distribution:distributions')
 
 
