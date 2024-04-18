@@ -15,17 +15,12 @@ class StyleFormMixin:
             elif isinstance(field.widget, forms.widgets.Select):
                 field.widget.attrs['class'] = 'form-control select2'
             elif isinstance(field, forms.DateTimeField):
-                field.widget.attrs['class'] = 'form-control flatpickr-basic'
-            elif isinstance(field.widget, forms.widgets.SelectMultiple):
-                field.widget.attrs['class'] = 'form-control select2 select2-multiple'
-            elif isinstance(field.widget, forms.widgets.Select):
-                field.widget.attrs['class'] = 'form-control select2'
-                # field.widget = DateTimeInput(
-                #     attrs={'class': 'form-control flatpickr-basic',
-                #            # "placeholder": "ДД.ММ.ГГГГ ЧЧ:ММ:СС",
-                #            # "type": "datetime-local"
-                #     }
-                # )
+                field.widget = DateTimeInput(
+                    attrs={'class': 'form-control flatpickr-basic',
+                           "placeholder": "ДД.ММ.ГГГГ ЧЧ:ММ:СС",
+                           "type": "datetime-local"
+                           }
+                )
             else:
                 field.widget.attrs['class'] = 'form-control'
 

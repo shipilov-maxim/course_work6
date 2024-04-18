@@ -1,4 +1,6 @@
 import pytz
+from apscheduler.schedulers.background import BackgroundScheduler
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpResponseRedirect, HttpResponseForbidden
@@ -9,7 +11,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 from distribution.forms import ClientForm, MailingSettingsForm, MessageForm, MailingSettingsFormUpdate
 from distribution.models import Client, MailingSettings, Message, MailingLog
-from distribution.services import cache_extra_context
+from distribution.services import cache_extra_context, apscheduler
 
 
 class BindOwnerMixin:
@@ -45,7 +47,14 @@ class LimitedFormMixin:
             return my_form_class
 
 
-class HomePageView(TemplateView):
+class APSchedulerMixin:
+    def get(self, *args, **kwargs):
+        scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+        apscheduler(scheduler)
+        return super().get(self, *args, **kwargs)
+
+
+class HomePageView(APSchedulerMixin, TemplateView):
     template_name = "distribution/index.html"
 
     def get_context_data(self, **kwargs):
@@ -64,7 +73,7 @@ class MessageUpdateView(LoginRequiredMixin, BindOwnerMixin, UpdateMixin, UpdateV
     success_url = reverse_lazy('distribution:messages')
 
 
-class MessageDeleteView(LoginRequiredMixin, BindOwnerMixin, DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     success_url = reverse_lazy('distribution:messages')
 
@@ -73,7 +82,7 @@ class MessageDetailView(LoginRequiredMixin, BindOwnerMixin, DetailView):
     model = Message
 
 
-class MessageListView(LoginRequiredMixin, BindOwnerMixin, ListView):
+class MessageListView(APSchedulerMixin, LoginRequiredMixin, BindOwnerMixin, ListView):
     model = Message
 
 
@@ -98,7 +107,7 @@ class ClientDetailView(LoginRequiredMixin, BindOwnerMixin, DetailView):
     model = Client
 
 
-class ClientListView(LoginRequiredMixin, BindOwnerMixin, ListView):
+class ClientListView(APSchedulerMixin, LoginRequiredMixin, BindOwnerMixin, ListView):
     model = Client
 
 
@@ -114,23 +123,17 @@ class MailingSettingsUpdateView(LoginRequiredMixin, BindOwnerMixin, LimitedFormM
     success_url = reverse_lazy('distribution:distributions')
 
 
-class MailingSettingsDeleteView(LoginRequiredMixin, BindOwnerMixin, DeleteView):
+class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
     model = MailingSettings
     success_url = reverse_lazy('distribution:distributions')
 
 
-class MailingSettingsListView(LoginRequiredMixin, BindOwnerMixin, ListView):
+class MailingSettingsListView(APSchedulerMixin, LoginRequiredMixin, BindOwnerMixin, ListView):
     model = MailingSettings
 
 
-class MailingLogListView(LoginRequiredMixin, BindOwnerMixin, ListView):
+class MailingLogListView(APSchedulerMixin, LoginRequiredMixin, BindOwnerMixin, ListView):
     model = MailingLog
-
-    def get_queryset(self, *args, **kwargs):
-        if self.request.user.is_staff:
-            return super().get_queryset().order_by('-time')
-        else:
-            return super().get_queryset().order_by('-time')
 
 
 def set_timezone(request):

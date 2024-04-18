@@ -87,3 +87,4 @@ class MailingLog(models.Model):
     class Meta:
         verbose_name = 'лог'
         verbose_name_plural = 'логи'
+        ordering = ('-time',)

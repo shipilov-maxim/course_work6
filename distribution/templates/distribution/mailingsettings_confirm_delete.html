@@ -7,7 +7,7 @@
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
-                <p>Хотите удалить {{object.start_time}} ?</p>
+                <p>Хотите удалить рассылку от {{object.start_time}} ?</p>
                 <button type="submit" class="btn btn-success">Подтвердить</button>
                 <a type="button" class="btn btn-danger" href="{% url 'distribution:home' %}">Отмена</a>
             </form>
